@@ -1,26 +1,196 @@
 @import "tailwindcss";
 
+/*
+  Nextudy design system
+  Dark cinematic, warm charcoal canvas, single electric accent (brand orange).
+  Every neutral is tinted toward the brand hue (~70deg) so nothing reads cold.
+  Colors in OKLCH; chroma pulled back near the lightness extremes.
+*/
+@theme {
+  /* Canvas + surfaces (warm near-black, never pure #000) */
+  --color-ink: oklch(0.149 0.009 68);
+  --color-ink-800: oklch(0.182 0.011 68);
+  --color-ink-700: oklch(0.224 0.012 67);
+  --color-ink-600: oklch(0.285 0.013 66);
+  --color-line: oklch(0.32 0.010 66);
+
+  /* Light register (brand cream) */
+  --color-paper: oklch(0.972 0.022 98);
+  --color-paper-deep: oklch(0.93 0.024 92);
+  --color-paper-line: oklch(0.86 0.020 88);
+
+  /* Type */
+  --color-bone: oklch(0.955 0.010 88);
+  --color-mute: oklch(0.745 0.013 76);
+  --color-faint: oklch(0.545 0.013 70);
+
+  /* Brand orange, dominant accent in both registers */
+  --color-accent: oklch(0.762 0.158 64);
+  --color-accent-bright: oklch(0.83 0.150 74);
+  --color-accent-deep: oklch(0.66 0.150 55);
+  --color-accent-ink: oklch(0.24 0.07 60);
+
+  --font-display: var(--font-satoshi), "Segoe UI", system-ui, sans-serif;
+  --font-body: var(--font-manrope), "Segoe UI", system-ui, sans-serif;
+
+  --ease-out-quart: cubic-bezier(0.165, 0.84, 0.44, 1);
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out-cubic: cubic-bezier(0.77, 0, 0.175, 1);
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  color-scheme: dark;
+  --grain-opacity: 0.05;
+  --shell: 78rem;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+* {
+  border-color: var(--color-line);
+  min-width: 0;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--color-ink);
+  color: var(--color-bone);
+  font-family: var(--font-body);
+  font-feature-settings: "ss01";
+  overflow-x: hidden;
+}
+
+::selection {
+  background: var(--color-accent);
+  color: var(--color-accent-ink);
+}
+
+/* Lenis */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+/* Layout shell */
+.shell {
+  width: 100%;
+  max-width: var(--shell);
+  margin-inline: auto;
+  padding-inline: clamp(1.25rem, 5vw, 4rem);
+}
+.shell-wide {
+  width: 100%;
+  max-width: 90rem;
+  margin-inline: auto;
+  padding-inline: clamp(1.25rem, 5vw, 4rem);
+}
+
+/* Display type defaults */
+.display {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 0.95;
+  text-wrap: balance;
+}
+.eyebrow {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.78rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+/* Word/line reveal masks (used by GSAP SplitText) */
+.line-mask {
+  overflow: hidden;
+  display: block;
+  padding-bottom: 0.04em;
+}
+/* small breathing room so descenders are not clipped by line masks */
+.split-line {
+  padding-bottom: 0.06em;
+}
+
+@keyframes scrollcue {
+  0% {
+    transform: translateY(-100%);
+  }
+  50% {
+    transform: translateY(0%);
+  }
+  100% {
+    transform: translateY(100%);
+  }
+}
+
+/* Cinematic ambient glow, background atmosphere only (not per-element glow) */
+.bloom {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(90px);
+  pointer-events: none;
+  opacity: 0.5;
+  background: radial-gradient(
+    circle at center,
+    color-mix(in oklch, var(--color-accent) 75%, transparent),
+    transparent 70%
+  );
+}
+
+/* Fixed film grain, pointer-events-none, never on a scrolling node */
+.grain {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  pointer-events: none;
+  opacity: var(--grain-opacity);
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Blueprint hairline grid as a reusable background */
+.blueprint-grid {
+  background-image:
+    linear-gradient(to right, color-mix(in oklch, var(--color-accent) 13%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in oklch, var(--color-accent) 13%, transparent) 1px, transparent 1px);
+  background-size: 58px 58px;
+}
+
+.hairline {
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    transparent,
+    var(--color-line) 16%,
+    var(--color-line) 84%,
+    transparent
+  );
+}
+
+/* Initial hidden state for JS reveals; if JS/motion off, content stays visible */
+.js .reveal-up {
+  opacity: 0;
+  will-change: transform, opacity;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .js .reveal-up {
+    opacity: 1;
+    transform: none;
+  }
+  .grain {
+    display: none;
+  }
+  * {
+    scroll-behavior: auto !important;
+  }
 }
