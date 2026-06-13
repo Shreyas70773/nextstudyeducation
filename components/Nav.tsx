@@ -35,7 +35,7 @@ export default function Nav() {
         <nav
           className={`shell-wide flex items-center justify-between rounded-full py-2.5 pl-4 pr-2.5 transition-[background-color,backdrop-filter,border-color,box-shadow] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
             scrolled
-              ? "border border-line/70 bg-ink-800/70 shadow-[0_10px_40px_-20px_rgba(0,0,0,0.8)] backdrop-blur-xl"
+              ? "border border-line/70 bg-ink-800/90 shadow-[0_10px_40px_-20px_rgba(0,0,0,0.8)] backdrop-blur-md"
               : "border border-transparent bg-transparent"
           }`}
           style={{ maxWidth: "min(72rem, calc(100% - 1.5rem))" }}
@@ -89,7 +89,7 @@ export default function Nav() {
 
       {/* Mobile menu */}
       <div
-        className={`fixed inset-0 z-[99] flex flex-col bg-ink/95 backdrop-blur-2xl transition-[opacity,visibility] duration-400 md:hidden ${
+        className={`fixed inset-0 z-[99] flex flex-col bg-ink/98 transition-[opacity,visibility] duration-400 md:hidden ${
           open ? "visible opacity-100" : "invisible opacity-0"
         }`}
       >
