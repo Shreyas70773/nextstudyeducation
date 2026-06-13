@@ -132,6 +132,82 @@ export default function Programs() {
         },
       );
 
+      // ---- Mobile auto-scrolling carousel (no pin) --------------------------
+      // The cards advance on their own (mirroring the desktop pan), ping-ponging
+      // across the set. Pauses while the visitor is interacting and only runs
+      // while the section is on screen. Honours prefers-reduced-motion.
+      mm.add("(max-width: 767px) and (prefers-reduced-motion: no-preference)", () => {
+        const items = Array.from(trackEl.children) as HTMLElement[];
+        if (items.length < 2) return;
+
+        let index = 0;
+        let dir = 1;
+        let paused = false;
+        let intervalId = 0;
+        let resumeId = 0;
+
+        const centerOf = (el: HTMLElement) => {
+          const er = scrollEl.getBoundingClientRect();
+          const cr = el.getBoundingClientRect();
+          return scrollEl.scrollLeft + (cr.left - er.left) - (er.width - cr.width) / 2;
+        };
+        const goTo = (i: number) =>
+          scrollEl.scrollTo({ left: Math.max(0, centerOf(items[i])), behavior: "smooth" });
+        const nearestIndex = () => {
+          const er = scrollEl.getBoundingClientRect();
+          const mid = er.left + er.width / 2;
+          let best = 0;
+          let bestDist = Infinity;
+          items.forEach((el, i) => {
+            const cr = el.getBoundingClientRect();
+            const d = Math.abs(cr.left + cr.width / 2 - mid);
+            if (d < bestDist) {
+              bestDist = d;
+              best = i;
+            }
+          });
+          return best;
+        };
+        const advance = () => {
+          if (paused) return;
+          if (index >= items.length - 1) dir = -1;
+          else if (index <= 0) dir = 1;
+          index += dir;
+          goTo(index);
+        };
+        const pause = () => {
+          paused = true;
+          window.clearTimeout(resumeId);
+          resumeId = window.setTimeout(() => {
+            index = nearestIndex();
+            paused = false;
+          }, 5000);
+        };
+
+        const io = new IntersectionObserver(
+          ([entry]) => {
+            if (entry.isIntersecting && !intervalId) {
+              intervalId = window.setInterval(advance, 3200);
+            } else if (!entry.isIntersecting && intervalId) {
+              window.clearInterval(intervalId);
+              intervalId = 0;
+            }
+          },
+          { threshold: 0.25 },
+        );
+        io.observe(pinEl);
+
+        const gestures = ["pointerdown", "touchstart", "wheel"] as const;
+        gestures.forEach((ev) => scrollEl.addEventListener(ev, pause, { passive: true }));
+
+        return () => {
+          io.disconnect();
+          window.clearInterval(intervalId);
+          window.clearTimeout(resumeId);
+          gestures.forEach((ev) => scrollEl.removeEventListener(ev, pause));
+        };
+      });
+
       return () => {
         headTween?.scrollTrigger?.kill();
         headTween?.kill();
