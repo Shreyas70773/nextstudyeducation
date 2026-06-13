@@ -36,12 +36,21 @@ export default function SmoothScroll({
     }
 
     // Delegate in-page anchor clicks to a smooth scroll, offset for the nav.
+    // Handles "#section" and "/#section" (the latter from other pages' footers);
+    // a "/#section" link is only intercepted on the homepage, otherwise the
+    // browser navigates home and the hash resolves there.
     const onClick = (e: MouseEvent) => {
       const anchor = (e.target as HTMLElement)?.closest?.(
-        'a[href^="#"]',
+        'a[href^="#"], a[href^="/#"]',
       ) as HTMLAnchorElement | null;
       if (!anchor) return;
-      const hash = anchor.getAttribute("href");
+      const href = anchor.getAttribute("href") || "";
+      let hash = "";
+      if (href.startsWith("#")) hash = href;
+      else if (href.startsWith("/#")) {
+        if (window.location.pathname !== "/") return;
+        hash = href.slice(1);
+      } else return;
       if (!hash || hash === "#") return;
       const target = document.querySelector(hash);
       if (!target) return;

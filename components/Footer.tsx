@@ -1,3 +1,4 @@
+import Link from "next/link";
 import Logo from "./ui/Logo";
 import { Social } from "./ui/icons";
 import { brand, nav } from "@/lib/content";
@@ -8,7 +9,9 @@ export default function Footer() {
       <div className="shell-wide">
         <div className="grid gap-12 md:grid-cols-[1.4fr_1fr_1fr]">
           <div className="max-w-sm">
-            <Logo height={30} />
+            <Link href="/" aria-label="Nextudy home" className="inline-flex">
+              <Logo height={30} />
+            </Link>
             <p className="mt-5 text-mute leading-relaxed">
               Mentor-led, project-based BIM training for civil engineers, architects, and
               graduates moving into modern construction careers.
@@ -23,13 +26,14 @@ export default function Footer() {
             {nav.map((item) => (
               <a
                 key={item.href}
-                href={item.href}
+                href={`/${item.href}`}
                 className="w-fit text-mute transition-colors duration-200 hover:text-bone"
               >
                 {item.label}
               </a>
             ))}
-            <a href="#lead" className="w-fit text-mute transition-colors duration-200 hover:text-bone">
+            {/* eslint-disable-next-line @next/next/no-html-link-for-pages -- in-page smooth-scroll anchor, handled by SmoothScroll */}
+            <a href="/#lead" className="w-fit text-mute transition-colors duration-200 hover:text-bone">
               Get the syllabus
             </a>
           </nav>
@@ -63,11 +67,31 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="mt-14 flex flex-col items-start justify-between gap-3 border-t border-line/50 pt-6 text-sm text-faint sm:flex-row sm:items-center">
+        <div className="mt-14 flex flex-col items-start gap-4 border-t border-line/50 pt-6 text-sm text-faint md:flex-row md:items-center md:justify-between">
           <span>
             &copy; {new Date().getFullYear()} {brand.name}. All rights reserved.
           </span>
-          <span>AEC upskilling, built around real BIM workflows.</span>
+
+          <div className="flex items-center gap-5">
+            <Link href="/privacy" className="transition-colors duration-200 hover:text-bone">
+              Privacy Policy
+            </Link>
+            <Link href="/terms" className="transition-colors duration-200 hover:text-bone">
+              Terms &amp; Conditions
+            </Link>
+          </div>
+
+          <span>
+            Powered by{" "}
+            <a
+              href="https://pixelandpunch.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-medium text-bone transition-colors duration-200 hover:text-accent"
+            >
+              Pixel and Punch
+            </a>
+          </span>
         </div>
       </div>
     </footer>

@@ -189,6 +189,59 @@ html.lenis body {
   );
 }
 
+/* Long-form legal/content pages */
+.legal-prose {
+  color: var(--color-mute);
+  line-height: 1.75;
+  font-size: 1rem;
+}
+.legal-prose h2 {
+  font-family: var(--font-display);
+  color: var(--color-bone);
+  font-size: 1.45rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  margin-top: 2.75rem;
+  margin-bottom: 0.75rem;
+}
+.legal-prose h2:first-child {
+  margin-top: 0;
+}
+.legal-prose h3 {
+  font-family: var(--font-display);
+  color: var(--color-bone);
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-top: 1.75rem;
+  margin-bottom: 0.5rem;
+}
+.legal-prose p {
+  margin-bottom: 1rem;
+  max-width: 72ch;
+}
+.legal-prose ul {
+  margin: 0.5rem 0 1.5rem;
+  padding-left: 1.25rem;
+  list-style: disc;
+  max-width: 72ch;
+}
+.legal-prose li {
+  margin-bottom: 0.45rem;
+}
+.legal-prose strong {
+  color: var(--color-bone);
+  font-weight: 600;
+}
+.legal-prose a {
+  color: var(--color-accent);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  transition: color 0.2s ease;
+}
+.legal-prose a:hover {
+  color: var(--color-accent-bright);
+}
+
 /* Initial hidden state for JS reveals; if JS/motion off, content stays visible.
    No persistent will-change: too many promoted layers exhaust GPU memory on
    mobile (iOS especially) and cause the opposite of smooth. */
